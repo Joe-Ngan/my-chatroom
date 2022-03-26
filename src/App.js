@@ -27,8 +27,8 @@ const auth = firebase.auth();
 const firestore = firebase.firestore();
 
 function App() {
-  const [user] =useAuthState(auth);
-  
+  const [user] = useAuthState(auth);
+
   return (
     <div className="App">
       <header>
@@ -43,20 +43,20 @@ function App() {
 }
 
 function SignIn() {
-  const signIn = () =>{
-      const provider = new firebase.auth.GoogleAuthProvider();
-      auth.signInWithPopup(provider);
+  const signIn = () => {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    auth.signInWithRedirect(provider);
   }
   return (
-  <div>
+    <div>
       <button onClick={signIn}>Sign in with Google</button>
-  </div>
+    </div>
   )
 }
 
 function SignOut() {
   return auth.currentUser && (
-    <button onClick={()=> auth.signOut()}>Sign Out</button>
+    <button onClick={() => auth.signOut()}>Sign Out</button>
   )
 }
 
@@ -65,52 +65,54 @@ function ChatRoom() {
   const query = msgRef.orderBy('createdAt').limitToLast(25);
 
   //message history feed: a hook listening to data
-  const [msgs] = useCollectionData(query, {idField: 'id'});
+  const [msgs] = useCollectionData(query, { idField: 'id' });
   //send new msg
   const [newMsg, setNewMsg] = useState('');
   // back to the lastest
   const lastest = useRef();
 
   //write new msg to firebase
-  const sendMsg = async(e) => {
-      e.preventDefault();//stop refresh the page when submitting
-      const {uid, photoURL, displayName} = auth.currentUser;//get what needs to be stored
-      await msgRef.add({
-          text: newMsg,
-          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-          uid,
-          photoURL,
-          displayName
-      });
+  const sendMsg = async (e) => {
+    e.preventDefault();//stop refresh the page when submitting
+    const { uid, photoURL, displayName } = auth.currentUser;//get what needs to be stored
+    await msgRef.add({
+      text: newMsg,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      uid,
+      photoURL,
+      displayName
+    });
 
-      setNewMsg('');
+    setNewMsg('');
 
-      lastest.current.scrollIntoView({ bahavior: 'smooth' });
+    lastest.current.scrollIntoView({ bahavior: 'smooth' });
   }
-return (
-  <div>
-    Welcome to the chatrooom
+  return (
     <div>
-        {msgs && msgs.map(msg => <ChatMessage key={msg.id} message={msg}/>)}
+      Welcome to the chatrooom
+      <div>
+        {msgs && msgs.map(msg => <ChatMessage key={msg.id} message={msg} />)}
         <div ref={lastest}></div>
-    </div>
-    <form onSubmit={sendMsg}>
-        <input value={newMsg} onChange={(e)=> setNewMsg(e.target.value)}/>
+      </div>
+      <form onSubmit={sendMsg}>
+        <input value={newMsg} onChange={(e) => setNewMsg(e.target.value)} />
         <button type="submit">🕊️</button>
-    </form>
-  </div>
-)
+      </form>
+    </div>
+  )
 }
 
 function ChatMessage(props) {
-  const {text, uid, photoURL, displayName} =props.message;
-  const sender = uid === auth.currentUser.uid ? 'me':'others';
+  const { text, uid, photoURL, displayName } = props.message;
+  const sender = uid === auth.currentUser.uid ? 'me' : 'others';
   return (
-      <div className={`message ${sender}`}>
-        <img src={photoURL} alt=""/>
-        <div>{displayName}</div>
-        <p>{text}</p>
+    <div className={`message ${sender}`}>
+      <div>
+        <img src={photoURL} alt="profile image"/>
+        <div className="name">{displayName}</div>
       </div>
+      <p className="bubble">{text}</p>
+    </div>
   )
 }
 

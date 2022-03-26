@@ -70,7 +70,6 @@ form button {
   background-color: rgb(56, 56, 143);
 }
 
-
 input {
   line-height: 1.5;
   width: 100%;
@@ -99,15 +98,12 @@ button:disabled {
   cursor: not-allowed;
 }
 
-
 .sign-in {
   color: #282c34;
   background: white;
   max-width: 400px;
   margin: 0 auto;
 }
-
-
 
 
 ul, li {
@@ -129,8 +125,12 @@ p {
 .message {
   display: flex;
   align-items: center;
+  margin: 1.5rem;
 }
 
+.bubble{
+  margin: 1rem;
+}
 
 .me {
   flex-direction: row-reverse;
@@ -140,6 +140,11 @@ p {
   color: white;
   background: #0b93f6;
   align-self: flex-end;
+}
+
+.name{
+  color: white;
+  font-size: xx-small;
 }
 .others p {
   background: #e5e5ea;
