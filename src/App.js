@@ -28,8 +28,8 @@ function App() {
   return (
     <div className="App">
       <header>
-        <h1>⚛️🔥💬</h1>
         <SignOut />
+        <h1>Jinzhou's chatroom</h1>
       </header>
 
       <section>
@@ -46,16 +46,15 @@ function SignIn() {
     auth.signInWithPopup(provider);
   }
   return (
-    <div>
-      <button onClick={signIn}>Sign in with Google</button>
-      <p>Welcome to our chatroom. A place where just we know.</p>
+    <div class="wrapper">
+      <a href="#" onClick={signIn}><span>Sign in with Google</span></a>
     </div>
   )
 }
 
 function SignOut() {
   return auth.currentUser && (
-    <button onClick={() => auth.signOut()}>Sign Out</button>
+    <button class="signOutBtn" onClick={() => auth.signOut()}>&laquo; </button>
   )
 }
 
@@ -92,14 +91,14 @@ function ChatRoom() {
   return (
     <>
     <main>
-        Welcome to the chatrooom
+        ✨
         {msgs && msgs.map(msg => <ChatMessage key={msg.id} message={msg} />)}
         <span ref={lastest}></span>
     </main>
 
     <form onSubmit={sendMsg}>
       <input value={newMsg} onChange={(e) => setNewMsg(e.target.value)} />
-      <button type="submit" disabled={!newMsg}>🕊️</button>
+      <button class="sendBtn" type="submit" disabled={!newMsg}>🚀</button>
     </form>
     </>
   )
@@ -114,8 +113,8 @@ function ChatMessage(props) {
     <>
     <div className={`message ${sender}`}>
       <div>
-        <img src={photoURL} alt="profile"/>
         <div className="name">{displayName}</div>
+        <img src={photoURL} alt="profile"/>
       </div>
       <p className="bubble">{text}</p>
     </div>
