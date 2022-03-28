@@ -1,5 +1,5 @@
-import './App.css';
 import { useState, useRef } from "react";
+import './App.css';
 //sdk
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
@@ -7,10 +7,6 @@ import 'firebase/compat/firestore';
 //hooks
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useCollectionData } from "react-firebase-hooks/firestore";
-//components
-// import ChatRoom from "./components/ChatRoom";
-// import SignIn from "./components/SignIn";
-// import ChatMessage from "./components/ChatMessage";
 
 //firebase config
 firebase.initializeApp({
@@ -35,6 +31,7 @@ function App() {
         <h1>⚛️🔥💬</h1>
         <SignOut />
       </header>
+
       <section>
         {user ? <ChatRoom /> : <SignIn />}
       </section>
@@ -43,13 +40,15 @@ function App() {
 }
 
 function SignIn() {
+
   const signIn = () => {
     const provider = new firebase.auth.GoogleAuthProvider();
-    auth.signInWithRedirect(provider);
+    auth.signInWithPopup(provider);
   }
   return (
     <div>
       <button onClick={signIn}>Sign in with Google</button>
+      <p>Welcome to our chatroom. A place where just we know.</p>
     </div>
   )
 }
@@ -73,46 +72,54 @@ function ChatRoom() {
 
   //write new msg to firebase
   const sendMsg = async (e) => {
-    e.preventDefault();//stop refresh the page when submitting
+    e.preventDefault(); //stop refresh the page when submitting
+
     const { uid, photoURL, displayName } = auth.currentUser;//get what needs to be stored
+    
     await msgRef.add({
       text: newMsg,
       createdAt: firebase.firestore.FieldValue.serverTimestamp(),
       uid,
       photoURL,
       displayName
-    });
+    })
 
+    //reset the text and place
     setNewMsg('');
-
     lastest.current.scrollIntoView({ bahavior: 'smooth' });
+
   }
   return (
-    <div>
-      Welcome to the chatrooom
-      <div>
+    <>
+    <main>
+        Welcome to the chatrooom
         {msgs && msgs.map(msg => <ChatMessage key={msg.id} message={msg} />)}
-        <div ref={lastest}></div>
-      </div>
-      <form onSubmit={sendMsg}>
-        <input value={newMsg} onChange={(e) => setNewMsg(e.target.value)} />
-        <button type="submit">🕊️</button>
-      </form>
-    </div>
+        <span ref={lastest}></span>
+    </main>
+
+    <form onSubmit={sendMsg}>
+      <input value={newMsg} onChange={(e) => setNewMsg(e.target.value)} />
+      <button type="submit" disabled={!newMsg}>🕊️</button>
+    </form>
+    </>
   )
 }
 
 function ChatMessage(props) {
   const { text, uid, photoURL, displayName } = props.message;
+
   const sender = uid === auth.currentUser.uid ? 'me' : 'others';
+
   return (
+    <>
     <div className={`message ${sender}`}>
       <div>
-        <img src={photoURL} alt="profile image"/>
+        <img src={photoURL} alt="profile"/>
         <div className="name">{displayName}</div>
       </div>
       <p className="bubble">{text}</p>
     </div>
+    </>
   )
 }
 
